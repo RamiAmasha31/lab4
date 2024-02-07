@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cryptocurrency Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div id="app" class="max-w-[1000px] mx-auto">
+      <h1 class="font-bold text-3xl text-center text-blue-600 my-4">
+        Cryptocurrency Data
+      </h1>
+    </div>
+    <script>
+      const row = (k, v, i) => {
+        const summary = v['summary'] 
+        return `<tr>
+          <td class="w-16 p-2 align-top border-b ${i === 0 && 'border-t'} border-gray-200"><img class="h-full w-auto" src="${v['image']}" /></td>
+          <td class="p-2 border-b border-gray-200">${k}</td>
+          <td class="p-2 border-b border-gray-200">${v['name']}</td>
+          <td class="p-2 border-b border-gray-200">${summary}</td>
+        </tr>`;
+      };
+
+      const createTable = (data) => {
+        console.log(data); // Log the data to inspect its structure
+
+        if (typeof data === 'object' && data !== null) {
+          const table = `
+            <table class="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr>
+                  <th class="w-16 p-2 align-top border-b border-gray-200"></th>
+                  <th class="p-2 border-b border-gray-200"></th>
+                  <th class="p-2 border-b border-gray-200">Name</th>
+                  <th class="p-2 border-b border-gray-200">Summary</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${Object.entries(data).map(([symbol, info], index) => row(symbol, info, index)).join('')}
+              </tbody>
+            </table>`;
+
+          document.getElementById('app').innerHTML += table;
+        } else {
+          console.error('Data is not in the expected format. Please check the API response.');
+        }
+      };
+
+      const url = "https://api.mtw-testnet.com/assets/all";
+      fetch(url)
+        .then((response) => response.json())
+        .then((v) => {
+          createTable(v);
+          console.log(v);
+        })
+        .catch((err) => console.log(err));
+    </script>
+  </body>
+</html>
